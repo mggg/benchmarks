@@ -1,6 +1,25 @@
 using GerryChain
 using LightGraphs
 using PyPlot
+using ArgParse
+
+
+# Function to parse from command line
+
+function parse_commandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "--graph-file"
+            help = "graph file path"
+        "--pop-file"
+            help = "population file path"
+        "--benchmark-type"
+            help = "type of benchmark to calculate"
+    end
+    
+    return parse_args(s)
+end
 
 
 # Write a function to load in a row from enumpart’s output as a GerryChain.jl Partition.
@@ -111,3 +130,11 @@ function plot_distribution(results)
     show()
     println("pass")
 end 
+
+
+function main()
+    parsed_args = parse_commandline()
+    println(load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"]))
+end
+
+main()
