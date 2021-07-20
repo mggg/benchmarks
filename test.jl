@@ -1,10 +1,9 @@
 using GerryChain
 using LightGraphs
 using PyPlot
-# use x = linspace(0,2*pi,1000) in Julia 0.6
 
-#Write a function to load in a row from enumpart’s output as a GerryChain.jl Partition.
 
+# Write a function to load in a row from enumpart’s output as a GerryChain.jl Partition.
 
 # Step 1: Initialize a simple graph 
     # needs number of nodes 
@@ -14,9 +13,6 @@ using PyPlot
 # Step 3: Initialize a partition
     # needs base graph, assignment 
     # assignment::Array{Int,1} assignment for each node in the graph 
-
-    
-
 
 function load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
 
@@ -33,7 +29,6 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
         end
         return total, node_populations
     end
-
 
     graph, edge_list = open(graph_file_path) do file
         edge_list = []
@@ -71,8 +66,6 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
     )
 end
 
-graph = load_graph_from_edge_list("enumpart/graph.dat", "enumpart/weight.dat")
-
 
 function load_partition_from_line(graph, assignments::String)::Partition
     populations = graph.populations
@@ -105,8 +98,6 @@ function load_partition_from_line(graph, assignments::String)::Partition
 
 end
 
-load_partition_from_line(graph, "0 1 1 1")
-
 function plot_distribution(results)
     pygui(true)
     x = [key for key in keys(results)]
@@ -120,7 +111,3 @@ function plot_distribution(results)
     show()
     println("pass")
 end 
-
-plot_distribution(Dict(30 => 29034, 29 => 79788, 28 => 114402, 27 => 102200,
-                 26 => 69156, 25 => 34424, 24 => 15748, 23 => 4400, 22 => 1804, 
-                 20 => 120, 21 => 128, 18 => 2))
