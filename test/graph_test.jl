@@ -9,6 +9,5 @@ using Test
         @test graph.num_edges == 4
         @test graph.populations == [1, 2, 4, 8]
         @test graph.total_pop == 15
-        # TODO: add more assertions here if you feel like it :)
     end
 end
