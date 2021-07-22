@@ -151,7 +151,17 @@ function load_partition_from_line(graph, assignments::String)::Partition
 end
 
 function calculate_benchmark(graph, enumeration_file::String, benchmark_type::String)::Dict
+    result = Dict{Int64,Int64}()
+    enumeration = open(enumeration_file) do file
+        for ln in eachline(file)
+            partition = load_partition_from_line(graph, ln)
+            cut_edge = partition.num_cut_edges
+            if cut_edge in keys(result)
 
+            end
+        end
+    end
+        
 end
 
 """
@@ -183,8 +193,8 @@ end
 
 function main()
     parsed_args = parse_commandline()
-    graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    println(load_partition_from_line(graph, "0 1 1 1"))
+    #graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
+    #println(load_partition_from_line(graph, "0 1 1 1"))
 end
 
 main()
