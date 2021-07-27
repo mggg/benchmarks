@@ -27,11 +27,6 @@ function parse_commandline()
     return parse_args(s)
 end
 
-# Step 2: Initialize a basegraph 
-# Step 3: Initialize a partition
-    # needs base graph, assignment 
-    # assignment::Array{Int,1} assignment for each node in the graph 
-
 """
     load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
 
