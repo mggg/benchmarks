@@ -243,14 +243,14 @@ function plot_distribution(results)
         width = 0.4, alpha = 0.3)
     title("Cut Edges")
     show()
-    println("pass")
 end 
 
 
 function main()
     parsed_args = parse_commandline()
     graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    print(spanning_tree_distribution(graph, parsed_args["enum-file"]))
+    result = spanning_tree_distribution(graph, parsed_args["enum-file"])
+    plot_distribution(result)
     
 end
 
