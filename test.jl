@@ -64,8 +64,9 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
     graph, edge_list = open(graph_file_path) do file
         edge_list = []
         for ln in eachline(file)
+            ln = split(ln)
             first = parse(Int64,ln[1])
-            second = parse(Int64,ln[3])
+            second = parse(Int64,ln[2])
             push!(edge_list,[first,second])
             if max(first, second) > nums_node
                 nums_node = max(first, second)
