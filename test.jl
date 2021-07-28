@@ -2,7 +2,8 @@ using GerryChain
 using LightGraphs
 using PyPlot
 using ArgParse
-
+using LinearAlgebra
+using StatsBase
 
 """
     parse_commandline()
@@ -18,7 +19,7 @@ function parse_commandline()
             help = "graph file path"
         "--pop-file"
             help = "population file path"
-        "--enumeration-file"
+        "--enum-file"
             help = "all possible enumeration of original graph"
         "--benchmark-type"
             help = "type of benchmark to calculate"
@@ -160,18 +161,63 @@ function load_partition_from_line(graph, assignments::String)::Partition
 
 end
 
-function calculate_benchmark(graph, enumeration_file::String, benchmark_type::String)::Dict
+function spanning_tree_distribution(graph, enum_file::String)
+    cut_edges = Dict{Int64,Int64}()
+    lines = 0
+    cut_edges, total_score = open(enum_file) do file
+        for line in eachline(file)
+            lines += 1 
+            partition = load_partition_from_line(graph,line)
+            score = 1 
+            for district in partition.dist_nodes
+                vlist = Vector{Int64}()
+                for k in district
+                    push!(vlist, k)
+                end
+                subgraph, vector = LightGraphs.induced_subgraph(graph.simple_graph, vlist)
+                L = LightGraphs.laplacian_matrix(subgraph)
+                L = L[1:end .!= 1, 1:end .!= 1]
+                spanning_tree = det(L)
+                score *= spanning_tree
+            end
+            if partition.num_cut_edges in keys(cut_edges)
+                cut_edges[partition.num_cut_edges] += score
+            else 
+                cut_edges[partition.num_cut_edges] = score
+            end
+        end
+        return cut_edges, sum(values(cut_edges))
+    end
+
+    distribution = Dict{Int64,Int64}()
+    probability = collect(values(cut_edges)) / total_score
+    choices = collect(keys(cut_edges))
+    for i in 1:lines
+        sampling = sample(choices, Weights(probability))
+        if sampling in keys(distribution)
+            distribution[sampling] += 1 
+        else
+            distribution[sampling] = 1 
+        end
+    end
+    return distribution
+end
+
+
+function calculate_benchmark(graph, enum_file::String, benchmark_type::String)::Dict
     result = Dict{Int64,Int64}()
-    enumeration = open(enumeration_file) do file
+    enumeration = open(enum_file) do file
         for ln in eachline(file)
             partition = load_partition_from_line(graph, ln)
             cut_edge = partition.num_cut_edges
             if cut_edge in keys(result)
-
+                result[cut_edge] += 1 
+            else 
+                result[cut_edge] = 1 
             end
         end
     end
-        
+    return result
 end
 
 """
@@ -203,8 +249,9 @@ end
 
 function main()
     parsed_args = parse_commandline()
-    #graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    #println(load_partition_from_line(graph, "0 1 1 1"))
+    graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
+    print(spanning_tree_distribution(graph, parsed_args["enum-file"]))
+    
 end
 
 main()
