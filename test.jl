@@ -61,8 +61,8 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
         if nodes != Set(1:length(nodes))
             throw(ArgumentError("Error loading input graph. Graph must be connected"))
         end
-        simple_graph = SimpleGraph(length(nodes))
-        return simple_graph, edge_list
+        graph = SimpleGraph(length(nodes))
+        return graph, edge_list
     end 
         
     for i in edge_list
@@ -118,10 +118,25 @@ function load_partition_from_line(graph, assignments::String)::Partition
     populations = graph.populations
     assignments_string = split(assignments)
     assignments = zeros(Int64, length(assignments_string))
+    districts = [] 
+
     for i in eachindex(assignments_string)
-        assignments[i] = parse(Int64, assignments_string[i])+1
-    end
-    num_districts = length(Set(assignments))
+        district_id = parse(Int64, assignments_string[i])
+        assignments[i] = district_id
+        if !(district_id in districts)
+            push!(districts, district_id)
+        end
+    end 
+    
+    sort!(districts)
+    
+    # districts are reassigned to 1 -> n-1 following the original order
+    reassign_district = Dict(zip(districts, 1:length(districts)))  
+    for i in eachindex(assignments)
+        assignments[i] = reassign_district[assignments[i]]
+    end 
+
+    num_districts = length(districts)
     
     # get cut_edges, district_adjacencies
     dist_adj, cut_edges = GerryChain.get_district_adj_and_cut_edges(graph, assignments, num_districts)
