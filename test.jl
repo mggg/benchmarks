@@ -47,32 +47,21 @@ BaseGraph(4, 4, 15, [1, 2, 4, 8],
 """
 function load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
 
-    nums_node = 0
-    total_population, populations = open(weight_file_path) do file
-        total = 0
-        node_populations = []
-        weights = read(file, String)
-        weights = split(weights)
-        for i in weights
-            curr_population = parse(Int64,i)
-            total += curr_population
-            push!(node_populations,curr_population)
-        end
-        return total, node_populations
-    end
-
     graph, edge_list = open(graph_file_path) do file
         edge_list = []
+        nodes = Set()
         for ln in eachline(file)
             ln = split(ln)
             first = parse(Int64,ln[1])
             second = parse(Int64,ln[2])
             push!(edge_list,[first,second])
-            if max(first, second) > nums_node
-                nums_node = max(first, second)
-            end     
+            push!(nodes, first)
+            push!(nodes, second)
         end
-        simple_graph = SimpleGraph(nums_node)
+        if nodes != Set(1:length(nodes))
+            throw(ArgumentError("Error loading input graph. Graph must be connected"))
+        end
+        simple_graph = SimpleGraph(length(nodes))
         return simple_graph, edge_list
     end 
         
@@ -83,6 +72,16 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
     edge_src, edge_dst = GerryChain.edges_from_graph(graph)
     adj_matrix = GerryChain.adjacency_matrix_from_graph(graph)
     neighbors = GerryChain.neighbors_from_graph(graph)   
+
+    total_population, populations = open(weight_file_path) do file
+        node_populations = []
+        weights = read(file, String)
+        weights = split(weights)
+        for i in weights
+            push!(node_populations, parse(Int64,i))
+        end
+        return sum(node_populations), node_populations
+    end
 
     return BaseGraph(
     nv(graph),

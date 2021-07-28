@@ -20,11 +20,14 @@ using Test
         @test graph.total_pop == 37
         @test graph.neighbors == [[2, 3], [1, 3, 4], [1, 2, 4, 5, 6], [2, 3, 6], [3,6], [3, 4, 5]]
     end 
-    @testset "6x6 triangular lattice" begin 
+    @testset "6x6 grid" begin 
         graph = load_graph_from_edge_list("data/6x6_grid.dat", "data/6x6_grid_weight.dat")
         @test graph.num_edges == 60
         @test graph.num_nodes == 36
         @test graph.populations == collect(1:36)
         @test graph.total_pop == sum(collect(1:36))
     end 
+    @testset "Disconnected graph" begin 
+        @test_throws ArgumentError load_graph_from_edge_list("data/6x6_disconnected_grid.dat", "data/6x6_grid_weight.dat")
+    end
 end
