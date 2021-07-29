@@ -1,32 +1,7 @@
 using GerryChain
 using LightGraphs
 using PyPlot
-using ArgParse
 using LinearAlgebra
-using StatsBase
-
-"""
-    parse_commandline()
-
-Parse arguments from command line.
-
-"""
-function parse_commandline()
-    s = ArgParseSettings()
-
-    @add_arg_table s begin
-        "--graph-file"
-            help = "graph file path"
-        "--pop-file"
-            help = "population file path"
-        "--enum-file"
-            help = "all possible enumeration of original graph"
-        "--benchmark-type"
-            help = "type of benchmark to calculate"
-    end
-
-    return parse_args(s)
-end
 
 """
     load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
@@ -232,14 +207,3 @@ function plot_distribution(results)
     title("Cut Edges")
     show()
 end 
-
-
-function main()
-    parsed_args = parse_commandline()
-    graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    result = spanning_tree_distribution(graph, parsed_args["enum-file"])
-    plot_distribution(result)
-    
-end
-
-main()
