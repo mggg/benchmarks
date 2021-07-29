@@ -162,7 +162,7 @@ function load_partition_from_line(graph, assignments::String)::Partition
 end
 
 function spanning_tree_distribution(graph, enum_file::String)
-    cut_edges = Dict{Int64,Int64}()
+    cut_edges = Dict{Int64,Float64}()
     lines = 0
     cut_edges, total_score = open(enum_file) do file
         for line in eachline(file)
@@ -188,19 +188,7 @@ function spanning_tree_distribution(graph, enum_file::String)
         end
         return cut_edges, sum(values(cut_edges))
     end
-
-    distribution = Dict{Int64,Int64}()
-    probability = collect(values(cut_edges)) / total_score
-    choices = collect(keys(cut_edges))
-    for i in 1:lines
-        sampling = sample(choices, Weights(probability))
-        if sampling in keys(distribution)
-            distribution[sampling] += 1 
-        else
-            distribution[sampling] = 1 
-        end
-    end
-    return distribution
+    return Dict(k => v / total_score for (k, v) in cut_edges)
 end
 
 
