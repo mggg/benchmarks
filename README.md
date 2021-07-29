@@ -6,6 +6,6 @@ Say somebody has a redistricting algorithm, or in other words a method for sampl
 ## Tests
 Use graph and weight files in test/data to test graph and partition functions.
 
-```julia
+```sh
 julia test.jl --graph-file test/data/6x6_grid.dat --pop-file test/data/6x6_grid_weight.dat --enum-file test/data/6x6_grid_enum.txt
 ```
