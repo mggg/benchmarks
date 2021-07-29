@@ -1,36 +1,7 @@
 using GerryChain
 using LightGraphs
 using PyPlot
-using ArgParse
-
-
-"""
-    parse_commandline()
-
-Parse arguments from command line.
-
-"""
-function parse_commandline()
-    s = ArgParseSettings()
-
-    @add_arg_table s begin
-        "--graph-file"
-            help = "graph file path"
-        "--pop-file"
-            help = "population file path"
-        "--enumeration-file"
-            help = "all possible enumeration of original graph"
-        "--benchmark-type"
-            help = "type of benchmark to calculate"
-    end
-
-    return parse_args(s)
-end
-
-# Step 2: Initialize a basegraph 
-# Step 3: Initialize a partition
-    # needs base graph, assignment 
-    # assignment::Array{Int,1} assignment for each node in the graph 
+using LinearAlgebra
 
 """
     load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
@@ -52,32 +23,22 @@ BaseGraph(4, 4, 15, [1, 2, 4, 8],
 """
 function load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
 
-    nums_node = 0
-    total_population, populations = open(weight_file_path) do file
-        total = 0
-        node_populations = []
-        weights = read(file, String)
-        weights = split(weights)
-        for i in weights
-            curr_population = parse(Int64,i)
-            total += curr_population
-            push!(node_populations,curr_population)
-        end
-        return total, node_populations
-    end
-
     graph, edge_list = open(graph_file_path) do file
         edge_list = []
+        nodes = Set()
         for ln in eachline(file)
+            ln = split(ln)
             first = parse(Int64,ln[1])
-            second = parse(Int64,ln[3])
+            second = parse(Int64,ln[2])
             push!(edge_list,[first,second])
-            if max(first, second) > nums_node
-                nums_node = max(first, second)
-            end     
+            push!(nodes, first)
+            push!(nodes, second)
         end
-        simple_graph = SimpleGraph(nums_node)
-        return simple_graph, edge_list
+        if nodes != Set(1:length(nodes))
+            throw(ArgumentError("Error loading input graph. Graph must be connected"))
+        end
+        graph = SimpleGraph(length(nodes))
+        return graph, edge_list
     end 
         
     for i in edge_list
@@ -87,6 +48,16 @@ function load_graph_from_edge_list(graph_file_path::String, weight_file_path::St
     edge_src, edge_dst = GerryChain.edges_from_graph(graph)
     adj_matrix = GerryChain.adjacency_matrix_from_graph(graph)
     neighbors = GerryChain.neighbors_from_graph(graph)   
+
+    total_population, populations = open(weight_file_path) do file
+        node_populations = []
+        weights = read(file, String)
+        weights = split(weights)
+        for i in weights
+            push!(node_populations, parse(Int64,i))
+        end
+        return sum(node_populations), node_populations
+    end
 
     return BaseGraph(
     nv(graph),
@@ -123,10 +94,25 @@ function load_partition_from_line(graph, assignments::String)::Partition
     populations = graph.populations
     assignments_string = split(assignments)
     assignments = zeros(Int64, length(assignments_string))
+    districts = [] 
+
     for i in eachindex(assignments_string)
-        assignments[i] = parse(Int64, assignments_string[i])+1
-    end
-    num_districts = length(Set(assignments))
+        district_id = parse(Int64, assignments_string[i])
+        assignments[i] = district_id
+        if !(district_id in districts)
+            push!(districts, district_id)
+        end
+    end 
+    
+    sort!(districts)
+    
+    # districts are reassigned to 1 -> n-1 following the original order
+    reassign_district = Dict(zip(districts, 1:length(districts)))  
+    for i in eachindex(assignments)
+        assignments[i] = reassign_district[assignments[i]]
+    end 
+
+    num_districts = length(districts)
     
     # get cut_edges, district_adjacencies
     dist_adj, cut_edges = GerryChain.get_district_adj_and_cut_edges(graph, assignments, num_districts)
@@ -150,18 +136,51 @@ function load_partition_from_line(graph, assignments::String)::Partition
 
 end
 
-function calculate_benchmark(graph, enumeration_file::String, benchmark_type::String)::Dict
+function spanning_tree_distribution(graph, enum_file::String)
+    cut_edges = Dict{Int64,Float64}()
+    lines = 0
+    cut_edges, total_score = open(enum_file) do file
+        for line in eachline(file)
+            lines += 1 
+            partition = load_partition_from_line(graph,line)
+            score = 1 
+            for district in partition.dist_nodes
+                vlist = Vector{Int64}()
+                for k in district
+                    push!(vlist, k)
+                end
+                subgraph, vector = LightGraphs.induced_subgraph(graph.simple_graph, vlist)
+                L = LightGraphs.laplacian_matrix(subgraph)
+                L = L[1:end .!= 1, 1:end .!= 1]
+                spanning_tree = det(L)
+                score *= spanning_tree
+            end
+            if partition.num_cut_edges in keys(cut_edges)
+                cut_edges[partition.num_cut_edges] += score
+            else 
+                cut_edges[partition.num_cut_edges] = score
+            end
+        end
+        return cut_edges, sum(values(cut_edges))
+    end
+    return Dict(k => v / total_score for (k, v) in cut_edges)
+end
+
+
+function calculate_benchmark(graph, enum_file::String, benchmark_type::String)::Dict
     result = Dict{Int64,Int64}()
-    enumeration = open(enumeration_file) do file
+    enumeration = open(enum_file) do file
         for ln in eachline(file)
             partition = load_partition_from_line(graph, ln)
             cut_edge = partition.num_cut_edges
             if cut_edge in keys(result)
-
+                result[cut_edge] += 1 
+            else 
+                result[cut_edge] = 1 
             end
         end
     end
-        
+    return result
 end
 
 """
@@ -187,14 +206,4 @@ function plot_distribution(results)
         width = 0.4, alpha = 0.3)
     title("Cut Edges")
     show()
-    println("pass")
 end 
-
-
-function main()
-    parsed_args = parse_commandline()
-    #graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    #println(load_partition_from_line(graph, "0 1 1 1"))
-end
-
-main()
