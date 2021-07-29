@@ -32,8 +32,7 @@ function main()
     parsed_args = parse_commandline()
     graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
     result = spanning_tree_distribution(graph, parsed_args["enum-file"])
-    plot_distribution(result)
-    
+    plot_distribution(result)   
 end
 
 main()
