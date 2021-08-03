@@ -2,6 +2,8 @@ using GerryChain
 using LightGraphs
 using PyPlot
 using LinearAlgebra
+using HypothesisTests
+
 
 """
     load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
@@ -108,15 +110,16 @@ function load_partition_from_line(graph, assignments::String)::Partition
     
     # districts are reassigned to 1 -> n-1 following the original order
     reassign_district = Dict(zip(districts, 1:length(districts)))  
+
     for i in eachindex(assignments)
         assignments[i] = reassign_district[assignments[i]]
     end 
-
     num_districts = length(districts)
     
-    # get cut_edges, district_adjacencies
+    # get cut_edges, district_adjacencies  
     dist_adj, cut_edges = GerryChain.get_district_adj_and_cut_edges(graph, assignments, num_districts)
     num_cut_edges = sum(cut_edges)  
+    
     # get district populations
     dist_populations =
         get_district_populations(assignments, populations, graph.num_nodes, num_districts)
@@ -136,6 +139,13 @@ function load_partition_from_line(graph, assignments::String)::Partition
 
 end
 
+
+"""
+    spanning_tree_distribution(graph, enum_file::String)::Dict
+
+Calculate spanning tree distribution of a full enumeration
+
+"""
 function spanning_tree_distribution(graph, enum_file::String)
     cut_edges = Dict{Int64,Float64}()
     lines = 0
@@ -167,21 +177,39 @@ function spanning_tree_distribution(graph, enum_file::String)
 end
 
 
-function calculate_benchmark(graph, enum_file::String, benchmark_type::String)::Dict
+"""
+    calculate_benchmark(graph, benchmark_type::String)::Dict
+
+Calculate the desired benchmark (cut edges, etc.) for input enumeration 
+Output a dictionary of summary statistics
+
+"""
+function calculate_benchmark(graph, benchmark_type)::Dict
     result = Dict{Int64,Int64}()
-    enumeration = open(enum_file) do file
-        for ln in eachline(file)
-            partition = load_partition_from_line(graph, ln)
-            cut_edge = partition.num_cut_edges
-            if cut_edge in keys(result)
-                result[cut_edge] += 1 
-            else 
-                result[cut_edge] = 1 
-            end
+    for ln in eachline(stdin)
+        partition = load_partition_from_line(graph, ln)
+        cut_edge = partition.num_cut_edges
+        if cut_edge in keys(result)
+            result[cut_edge] += 1 
+        else 
+            result[cut_edge] = 1  
         end
     end
-    return result
+    sum_values = sum(values(result))
+    return Dict(k => v / sum_values for (k, v) in result)
 end
+
+"""
+    calculate_Kolmogorov_Smirnov_distance(graph, benchmark_type::String)::Dict
+
+Calculate the Kolmogorov Smirnov distance between the target distribution and the testing distribution
+
+"""
+function calculate_Kolmogorov_Smirnov_distance()
+    none = HypothesisTests.ApproximateTwoSampleKSTest()
+
+end 
+
 
 """
     plot_distribution(results)
@@ -189,21 +217,11 @@ end
 Plot the summary benchmarks that we need.
 Results is a dictionary with count of each benchmark level
 
-# Examples
-```julia-repl
-julia> plot_distribution(results)
-1
-```
 """
-function plot_distribution(results)
+function plot_distribution(results, color)
     pygui(true)
     x = [key for key in keys(results)]
-    print(typeof(x))
     y = [value for value in values(results)]
-    print(typeof(y))
-    fig = figure(figsize = (10, 5))
-    bar(x, y, color ="maroon",
-        width = 0.4, alpha = 0.3)
+    bar(x, y, color = color, width = 0.4, alpha = 0.3)
     title("Cut Edges")
-    show()
 end 
