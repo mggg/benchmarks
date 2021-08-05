@@ -2,7 +2,7 @@ using GerryChain
 using LightGraphs
 using PyPlot
 using LinearAlgebra
-using HypothesisTests
+using StatsBase
 
 
 """
@@ -200,14 +200,19 @@ function calculate_benchmark(graph, benchmark_type)::Dict
 end
 
 """
-    calculate_Kolmogorov_Smirnov_distance(graph, benchmark_type::String)::Dict
+    calculate_Kullback_Leibler_distance(target, test)
 
-Calculate the Kolmogorov Smirnov distance between the target distribution and the testing distribution
+Calculate the Kullback Leibler distance between the target distribution and the testing distribution
+Input: dictionary output from calculate_benchmark and spanning_tree_distribution
 
 """
-function calculate_Kolmogorov_Smirnov_distance()
-    none = HypothesisTests.ApproximateTwoSampleKSTest()
-
+function calculate_Kullback_Leibler(target, test)
+    # get array of all keys in target, test 
+    # replace keys that are not in both target and test with 0 
+    # otherwise, replace keys with their values 
+    # resulting array is input for stats base kl function
+    kl = StatsBase.kldivergence(p, q)
+    return kl
 end 
 
 
