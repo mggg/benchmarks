@@ -22,6 +22,7 @@ function parse_commandline()
             help = "all possible enumeration of original graph"
         "--benchmark"
             help = "type of benchmark to calculate. Default type is cut edges"
+            default = "cut_edges"
     end
 
     return parse_args(s)
@@ -34,7 +35,7 @@ function main()
     test_enumeration = calculate_benchmark(graph, parsed_args["benchmark"])
     spanning_tree = spanning_tree_distribution(graph, parsed_args["enum-file"])
     fig = figure(figsize = (10, 5))
-    plot_distribution(test_enumeration, "maroon")  
+    plot_distribution(test_enumeration)  
     plot_distribution(spanning_tree, "blue")
     show() 
 end
