@@ -12,10 +12,10 @@
 * dumbbell: a graph with three nodes in a line connecting two centers of seven nodes arranged in a hexagon. 17 nodes and 28 edges.
 * dumbbell_weight_sides: dumbbell graph weighted on the two wheels.
 * dumbbell_weight_head: dumbbell graph weighted on the three middle connecting nodes.
-* petersen: a petersen graph with 10 nodes and 15 edges [(see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Petersen1_tiny.svg/1200px-Petersen1_tiny.svg.png)
+* petersen: a petersen graph with 10 nodes and 15 edges [(see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Petersen1_tiny.svg/1200px-Petersen1_tiny.svg.png).
 * petersen_weight: weights on the petersen graph.
-* tuttes_fragment: the tutte fragment graph with 18 nodes and 24 edges [see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Tutte_fragment.svg/800px-Tutte_fragment.svg.png)
+* tuttes_fragment: the tutte fragment graph with 18 nodes and 24 edges [(see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Tutte_fragment.svg/800px-Tutte_fragment.svg.png).
 * tuttes_fragment_weight_leaves: weights on the tuttes fragment graph, except the leaves have extra weight.
-* young_fibonacci: a young-fibonacci lattice up to the 5th row. Has 12 nodes and 14 edges [(see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Young-Fibonacci.svg/1200px-Young-Fibonacci.svg.png)
+* young_fibonacci: a young-fibonacci lattice up to the 5th row. Has 12 nodes and 14 edges [(see Wikipedia)](https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Young-Fibonacci.svg/1200px-Young-Fibonacci.svg.png).
 * young_fibonacci_weight_head: weighted from single head to legs, high to low.
 * young_fibonacci_weight_legs: weighted from many legs to single head, high to low.
