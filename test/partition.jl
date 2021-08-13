@@ -1,4 +1,4 @@
-include("../test.jl")
+include("../src/test.jl")
 using GerryChain
 using Test
 
@@ -27,11 +27,9 @@ using Test
     end
 end
 
-
+"""
 @testset "Calculate benchmark" begin
     graph = load_graph_from_edge_list("data/2x2_grid.dat", "data/2x2_grid_weight.dat")
-    result = calculate_benchmark(graph, "data/2x2_grid_enum.txt", "")
-    @testset "cut edges" begin
-        @test result == Dict{Int64,Int64}(2 => 4)
-    end
+    result = calculate_benchmark(graph, "cut_edges")
 end
+"""

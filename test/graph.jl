@@ -1,4 +1,4 @@
-include("../test.jl")
+include("../src/test.jl")
 using GerryChain
 using Test
 
