@@ -42,8 +42,6 @@ function main()
     spanning_tree = spanning_tree_distribution(graph, parsed_args["enum-file"])
     if parse(Int64, parsed_args["metric-kl"]) > 0
         kl = calculate_Kullback_Leibler(spanning_tree, test_enumeration)
-        println(kl)
-        # not done yet
         if kl > parse(Int64, parsed_args["metric-kl"]) 
             error("Maximum KL distance exceeded")
         end 
@@ -55,5 +53,3 @@ function main()
         show() 
     end
 end
-
-main()
