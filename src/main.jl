@@ -48,7 +48,7 @@ function main()
     end 
     if parsed_args["p"]
         fig = figure(figsize = (10, 5))
-        plot_distribution(test_enumeration, "maroon")  
+        plot_distribution(test_enumeration)  
         plot_distribution(spanning_tree, "blue")
         show() 
     end

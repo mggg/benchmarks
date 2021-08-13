@@ -170,6 +170,7 @@ Output a dictionary of summary statistics
 
 """
 function calculate_benchmark(graph, benchmark_type)::Dict
+    @assert benchmark_type == "cut_edges" "Only the `cut_edges` benchmark is currently implemented"
     result = Dict{Int64,Int64}()
     for ln in eachline(stdin)
         partition = load_partition_from_line(graph, ln)
@@ -218,13 +219,13 @@ end
 
 
 """
-    plot_distribution(results)
+    plot_distribution(results, color)
 
 Plot the summary benchmarks that we need.
 Results is a dictionary with count of each benchmark level
 
 """
-function plot_distribution(results, color)
+function plot_distribution(results, color = "maroon")
     pygui(true)
     x = [key for key in keys(results)]
     y = [value for value in values(results)]
