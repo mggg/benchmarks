@@ -211,7 +211,23 @@ function calculate_Kullback_Leibler(target, test)
     # replace keys that are not in both target and test with 0 
     # otherwise, replace keys with their values 
     # resulting array is input for stats base kl function
-    kl = StatsBase.kldivergence(p, q)
+    p = sort(collect(keys(target)))
+    q = collect(keys(test))
+    final_q = zeros(Int64, length(p))
+    for (index, value) in enumerate(p)
+        if value in q
+            final_q[index] = value
+        else
+            final_q[index] = 0
+        end
+    end 
+    for value in q
+        if (value in p) == false
+            push!(final_q, value)
+            push!(p, 0)
+        end 
+    end
+    kl = StatsBase.kldivergence(p, final_q)
     return kl
 end 
 

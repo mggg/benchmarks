@@ -45,7 +45,7 @@ function main()
         println(kl)
         # not done yet
         if kl > parse(Int64, parsed_args["metric-kl"]) 
-            error("Maximum distance exceeded")
+            error("Maximum KL distance exceeded")
         end 
     end 
     if parsed_args["p"]
