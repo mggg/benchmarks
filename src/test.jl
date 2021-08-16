@@ -2,8 +2,11 @@ using GerryChain
 using LightGraphs
 using PyPlot
 using LinearAlgebra
+<<<<<<< HEAD:src/test.jl
 using StatsBase
 
+=======
+>>>>>>> main:test.jl
 
 """
     load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
@@ -12,9 +15,12 @@ Construct basegraph object using a graph file and a weight file.
 Graph file describes basic structure of graph using edge list.
 Weight file stores population assigned to each node
 
+<<<<<<< HEAD:src/test.jl
 # Examples
 ```julia-repl
 julia> load_graph_from_edge_list("graph.dat", "weight.dat")
+=======
+>>>>>>> main:test.jl
 """
 function load_graph_from_edge_list(graph_file_path::String, weight_file_path::String)
 
@@ -186,6 +192,7 @@ function calculate_benchmark(graph, benchmark_type)::Dict
 end
 
 """
+<<<<<<< HEAD:src/test.jl
     calculate_Kullback_Leibler_distance(target, test)
 
 Calculate the Kullback Leibler distance between the target distribution and the testing distribution
@@ -219,6 +226,8 @@ end
 
 
 """
+=======
+>>>>>>> main:test.jl
     plot_distribution(results, color)
 
 Plot the summary benchmarks that we need.
