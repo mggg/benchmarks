@@ -43,6 +43,7 @@ function main()
     if parse(Int64, parsed_args["metric-kl"]) > 0
         kl = calculate_Kullback_Leibler(spanning_tree, test_enumeration)
         if kl > parse(Int64, parsed_args["metric-kl"]) 
+            println(kl)
             error("Maximum KL distance exceeded")
         end 
     end 

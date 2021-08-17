@@ -201,13 +201,13 @@ function calculate_Kullback_Leibler(target, test)
         if value in q
             final_q[index] = value
         else
-            final_q[index] = 0
+            final_q[index] = 0.0001
         end
     end 
     for value in q
-        if (value in p) == false
+        if !(value in p)
             push!(final_q, value)
-            push!(p, 0)
+            push!(p, 0.0001)
         end 
     end
     kl = StatsBase.kldivergence(p, final_q)
