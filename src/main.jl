@@ -25,7 +25,7 @@ function parse_commandline()
             help = "all possible enumeration of original graph"
         "--benchmark"
             help = "type of benchmark to calculate. Default type is cut edges"
-            default = "cut_edge"
+            default = "cut_edges"
         "--metric-kl"
             help = "Compute the Kullback-Leibler divergence between two distributions"
             default = 0
@@ -38,8 +38,11 @@ end
 function main()
     parsed_args = parse_commandline()
     graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
+    println("pass1")
     test_enumeration = calculate_benchmark(graph, parsed_args["benchmark"])
+    println("pass2")
     spanning_tree = spanning_tree_distribution(graph, parsed_args["enum-file"])
+    println("pass3")
     if parse(Int64, parsed_args["metric-kl"]) > 0
         kl = calculate_Kullback_Leibler(spanning_tree, test_enumeration)
         if kl > parse(Int64, parsed_args["metric-kl"]) 
@@ -54,3 +57,5 @@ function main()
         show() 
     end
 end
+
+main()
