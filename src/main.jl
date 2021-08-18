@@ -38,12 +38,9 @@ end
 function main()
     parsed_args = parse_commandline()
     graph = load_graph_from_edge_list(parsed_args["graph-file"], parsed_args["pop-file"])
-    println("pass1")
     test_enumeration = calculate_benchmark(graph, parsed_args["benchmark"])
-    println("pass2")
     spanning_tree = spanning_tree_distribution(graph, parsed_args["enum-file"])
-    println("pass3")
-    if parse(Int64, parsed_args["metric-kl"]) > 0
+    if parsed_args["metric-kl"] != 0
         kl = calculate_Kullback_Leibler(spanning_tree, test_enumeration)
         if kl > parse(Int64, parsed_args["metric-kl"]) 
             println(kl)

@@ -202,10 +202,6 @@ Input: dictionary output from calculate_benchmark and spanning_tree_distribution
 
 """
 function calculate_Kullback_Leibler(target, test)
-    # get array of all keys in target, test 
-    # replace keys that are not in both target and test with 0 
-    # otherwise, replace keys with their values 
-    # resulting array is input for stats base kl function
     p = sort(collect(keys(target)))
     q = collect(keys(test))
     final_q = zeros(Int64, length(p))
