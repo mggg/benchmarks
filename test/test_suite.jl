@@ -117,14 +117,14 @@ young_fibonacci_reassignment_assignment = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
             @test partition.num_dists == 2
             @test partition.num_cut_edges == 1
             @test partition.assignments == dumbbell_two_dists_assignment
-            @test partition.dist_populations == [44, 41]
+            @test partition.dist_populations == [24, 18] 
         end
         @testset "three districts" begin
             partition = load_partition_from_line(dumbbell, dumbbell_three_dists)
             @test partition.num_dists == 3
             @test partition.num_cut_edges == 6
             @test partition.assignments == dumbbell_three_dists_assignment
-            @test partition.dist_populations == [34, 18, 33] 
+            @test partition.dist_populations == [12, 18, 12] 
         end
         @testset "reassign district id" begin
             partition = load_partition_from_line(dumbbell, dumbbell_reassignment_two_dists)
@@ -141,14 +141,14 @@ young_fibonacci_reassignment_assignment = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
             @test partition.num_dists == 2
             @test partition.num_cut_edges == 1
             @test partition.assignments == dumbbell_two_dists_assignment
-            @test partition.dist_populations == [24, 18]
+            @test partition.dist_populations == [44, 41]
         end
         @testset "three districts" begin
             partition = load_partition_from_line(dumbbell, dumbbell_three_dists)
             @test partition.num_dists == 3
             @test partition.num_cut_edges == 6
             @test partition.assignments == dumbbell_three_dists_assignment
-            @test partition.dist_populations == [12, 18, 12]
+            @test partition.dist_populations == [34, 18, 33] 
         end
         @testset "reassign district id" begin
             partition = load_partition_from_line(dumbbell, dumbbell_reassignment_two_dists)
