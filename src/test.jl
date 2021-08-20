@@ -178,17 +178,19 @@ Output a dictionary of summary statistics
 function calculate_benchmark(graph, benchmark_type)::Dict
     @assert benchmark_type == "cut_edges" "Only the `cut_edges` benchmark is currently implemented"
     result = Dict{Int64,Int64}()
+    counter = 0
     for ln in eachline(stdin)
-    	if occursin(",", ln)
-            partition = load_partition_from_line(graph, ln)
-            cut_edge = partition.num_cut_edges
-            if cut_edge in keys(result)
-                result[cut_edge] += 1 
-            else 
-                result[cut_edge] = 1  
-            end
+        counter += 1 
+        if counter > 5
+            break
+        end
+        partition = load_partition_from_line(graph, ln)
+        cut_edge = partition.num_cut_edges
+        if cut_edge in keys(result)
+            result[cut_edge] += 1 
+        else 
+            result[cut_edge] = 1  
 	    end
-        println(result)
     end
     sum_values = sum(values(result))
     return Dict(k => v / sum_values for (k, v) in result)
