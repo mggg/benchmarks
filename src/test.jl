@@ -207,17 +207,18 @@ function calculate_Kullback_Leibler(target, test)
     p = sort(collect(keys(target)))
     q = collect(keys(test))
     final_q = zeros(Int64, length(p))
+    dummy_value = 0.0001
     for (index, value) in enumerate(p)
         if value in q
             final_q[index] = value
         else
-            final_q[index] = 0.0001
+            final_q[index] = dummy_value
         end
     end 
     for value in q
         if !(value in p)
             push!(final_q, value)
-            push!(p, 0.0001)
+            push!(p, dummy_value)
         end 
     end
     kl = StatsBase.kldivergence(p, final_q)
